@@ -8,11 +8,10 @@ class MistralAIEmbeddingFunction:
         self,
         api_key: str,
         model_name: str = "mistral-embed",
-        dimensions: Optional[int] = 1024,
         **kwargs,
     ):
         self._mistral_model_meta_info = defaultdict(dict)
-        self._mistral_model_meta_info[model_name]["dim"] = dimensions
+        self._mistral_model_meta_info[model_name]["dim"] = 1024 # fixed dimension
 
         self.api_key = api_key
         self.model_name = model_name
@@ -47,3 +46,5 @@ class MistralAIEmbeddingFunction:
 
     def _encode(self, texts: List[str]):
         return self._call_mistral_api(texts)
+    
+    
