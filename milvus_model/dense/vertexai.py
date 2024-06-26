@@ -25,7 +25,6 @@ class VertexAIEmbeddingFunction:
 
         self._encode_config = {"model": model_name, "task": task, **additional_encode_config}
         self.model_name = model_name
-        vertexai.init(project=project_id, location=location)
         self.client = TextEmbeddingModel.from_pretrained(model_name)
 
     def encode_queries(self, queries: List[str]) -> List[np.array]:
