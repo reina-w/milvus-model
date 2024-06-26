@@ -1,5 +1,6 @@
 from typing import List, Optional
 import numpy as np
+import vertexai
 from vertexai.language_models import TextEmbeddingInput, TextEmbeddingModel
 from collections import defaultdict
 
@@ -11,11 +12,11 @@ class VertexAIEmbeddingFunction:
         base_url: Optional[str] = None,
         dimensions: Optional[int] = 256,
         task: str = "SEMANTIC_SIMILARITY",
+        project_id: Optional[str] = None,
+        location: str = "us-central1",
         **kwargs,
     ):
         self._vertexai_model_meta_info = defaultdict(dict)
-        self._vertexai_model_meta_info["text-embedding-004"]["dim"] = 256
-
         self._model_config = dict({"api_key": api_key, "base_url": base_url}, **kwargs)
         additional_encode_config = {}
         if dimensions is not None:
@@ -24,6 +25,7 @@ class VertexAIEmbeddingFunction:
 
         self._encode_config = {"model": model_name, "task": task, **additional_encode_config}
         self.model_name = model_name
+        vertexai.init(project=project_id, location=location)
         self.client = TextEmbeddingModel.from_pretrained(model_name)
 
     def encode_queries(self, queries: List[str]) -> List[np.array]:
