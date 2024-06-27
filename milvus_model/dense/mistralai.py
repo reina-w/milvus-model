@@ -15,12 +15,12 @@ class MistralAIEmbeddingFunction:
         self._mistral_model_meta_info[model_name]["dim"] = 1024 # fixed dimension
 
         if api_key is None:
-            if "JINAAI_API_KEY" in os.environ and os.environ["JINAAI_API_KEY"]:
-                self.api_key = os.environ["JINAAI_API_KEY"]
+            if "MISTRALAI_API_KEY" in os.environ and os.environ["MISTRALAI_API_KEY"]:
+                self.api_key = os.environ["MISTRALAI_API_KEY"]
             else:
                 error_message = (
                     "Did not find api_key, please add an environment variable"
-                    " `JINAAI_API_KEY` which contains it, or pass"
+                    " `MISTRALAI_API_KEY` which contains it, or pass"
                     "  `api_key` as a named parameter."
                 )
                 raise ValueError(error_message)

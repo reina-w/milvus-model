@@ -1,6 +1,5 @@
 from typing import List, Optional
 import numpy as np
-import vertexai
 from vertexai.language_models import TextEmbeddingInput, TextEmbeddingModel
 from collections import defaultdict
 import os
@@ -35,8 +34,11 @@ class VertexAIEmbeddingFunction:
                 raise ValueError(error_message)
         else:
             self.api_key = api_key
-        self._encode_config = {"model": model_name, "task": task, **additional_encode_config}
+        self._encode_config = {"model": model_name, **additional_encode_config}
+        self.task = task
         self.model_name = model_name
+        self.project_id = project_id
+        self.location = location
         self.client = TextEmbeddingModel.from_pretrained(model_name)
 
     def encode_queries(self, queries: List[str]) -> List[np.array]:
@@ -50,7 +52,8 @@ class VertexAIEmbeddingFunction:
         return self._vertexai_model_meta_info[self.model_name]["dim"]
 
     def __call__(self, texts: List[str], task: str = "SEMANTIC_SIMILARITY") -> List[np.array]:
-        return self._encode(texts, task)
+        self.task = task
+        return self._encode(texts)
 
     def _encode_query(self, query: str) -> np.array:
         return self._encode([query], task="RETRIEVAL_QUERY")[0]
@@ -59,8 +62,9 @@ class VertexAIEmbeddingFunction:
         return self._encode([document], task="RETRIEVAL_DOCUMENT")[0]
 
     def _call_vertexai_api(self, texts: List[str]):
-        inputs = [TextEmbeddingInput(text, self._encode_config["task"]) for text in texts]
-        embeddings = self.client.get_embeddings(inputs, **self._encode_config)
+        inputs = [TextEmbeddingInput(text, self.task) for text in texts]
+        kwargs = dict(output_dimensionality=self._vertexai_model_meta_info[self.model_name]["dim"])
+        embeddings = self.client.get_embeddings(inputs, **kwargs)
         return [np.array(embedding.values) for embedding in embeddings]
 
     def _encode(self, texts: List[str]):
