@@ -18,23 +18,20 @@ class VertexAIEmbeddingFunction:
     ):
         self._vertexai_model_meta_info = defaultdict(dict)
         self._model_config = dict({"api_key": api_key, "base_url": base_url}, **kwargs)
-        additional_encode_config = {}
         if dimensions is not None:
-            additional_encode_config = {"dimensions": dimensions}
             self._vertexai_model_meta_info[model_name]["dim"] = dimensions
         if api_key is None:
             if "JINAAI_API_KEY" in os.environ and os.environ["JINAAI_API_KEY"]:
                 self.api_key = os.environ["JINAAI_API_KEY"]
             else:
-                error_message = (
+                raise ValueError(
                     "Did not find api_key, please add an environment variable"
                     " `JINAAI_API_KEY` which contains it, or pass"
-                    "  `api_key` as a named parameter."
+                    " `api_key` as a named parameter."
                 )
-                raise ValueError(error_message)
         else:
             self.api_key = api_key
-        self._encode_config = {"model": model_name, **additional_encode_config}
+        self._encode_config = {"model": model_name, "dimensions": dimensions}
         self.task = task
         self.model_name = model_name
         self.project_id = project_id
@@ -42,10 +39,12 @@ class VertexAIEmbeddingFunction:
         self.client = TextEmbeddingModel.from_pretrained(model_name)
 
     def encode_queries(self, queries: List[str]) -> List[np.array]:
-        return self._encode(queries, task="RETRIEVAL_QUERY")
+        self.task = "RETRIEVAL_QUERY"
+        return self._encode(queries)
 
     def encode_documents(self, documents: List[str]) -> List[np.array]:
-        return self._encode(documents, task="RETRIEVAL_DOCUMENT")
+        self.task = "RETRIEVAL_DOCUMENT"
+        return self._encode(documents)
 
     @property
     def dim(self):
@@ -56,10 +55,12 @@ class VertexAIEmbeddingFunction:
         return self._encode(texts)
 
     def _encode_query(self, query: str) -> np.array:
-        return self._encode([query], task="RETRIEVAL_QUERY")[0]
+        self.task = "RETRIEVAL_QUERY"
+        return self._encode([query])[0]
 
     def _encode_document(self, document: str) -> np.array:
-        return self._encode([document], task="RETRIEVAL_DOCUMENT")[0]
+        self.task = "RETRIEVAL_DOCUMENT"
+        return self._encode([document])[0]
 
     def _call_vertexai_api(self, texts: List[str]):
         inputs = [TextEmbeddingInput(text, self.task) for text in texts]
