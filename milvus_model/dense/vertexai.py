@@ -3,6 +3,7 @@ import numpy as np
 import vertexai
 from vertexai.language_models import TextEmbeddingInput, TextEmbeddingModel
 from collections import defaultdict
+import os
 
 class VertexAIEmbeddingFunction:
     def __init__(
@@ -22,7 +23,18 @@ class VertexAIEmbeddingFunction:
         if dimensions is not None:
             additional_encode_config = {"dimensions": dimensions}
             self._vertexai_model_meta_info[model_name]["dim"] = dimensions
-
+        if api_key is None:
+            if "JINAAI_API_KEY" in os.environ and os.environ["JINAAI_API_KEY"]:
+                self.api_key = os.environ["JINAAI_API_KEY"]
+            else:
+                error_message = (
+                    "Did not find api_key, please add an environment variable"
+                    " `JINAAI_API_KEY` which contains it, or pass"
+                    "  `api_key` as a named parameter."
+                )
+                raise ValueError(error_message)
+        else:
+            self.api_key = api_key
         self._encode_config = {"model": model_name, "task": task, **additional_encode_config}
         self.model_name = model_name
         self.client = TextEmbeddingModel.from_pretrained(model_name)

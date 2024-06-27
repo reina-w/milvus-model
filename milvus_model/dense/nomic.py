@@ -2,6 +2,7 @@ from typing import List
 import numpy as np
 from collections import defaultdict
 from nomic import embed
+import os
 
 class NomicEmbeddingFunction:
     def __init__(
@@ -15,7 +16,18 @@ class NomicEmbeddingFunction:
         self._nomic_model_meta_info = defaultdict(dict)
         self._nomic_model_meta_info[model_name]["dim"] = dimensionality  # set the dimension
 
-        self.api_key = api_key
+        if api_key is None:
+            if "JINAAI_API_KEY" in os.environ and os.environ["JINAAI_API_KEY"]:
+                self.api_key = os.environ["JINAAI_API_KEY"]
+            else:
+                error_message = (
+                    "Did not find api_key, please add an environment variable"
+                    " `JINAAI_API_KEY` which contains it, or pass"
+                    "  `api_key` as a named parameter."
+                )
+                raise ValueError(error_message)
+        else:
+            self.api_key = api_key
         self.model_name = model_name
         self.task_type = task_type
         self.dimensionality = dimensionality
