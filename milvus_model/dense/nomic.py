@@ -17,12 +17,12 @@ class NomicEmbeddingFunction:
         self._nomic_model_meta_info[model_name]["dim"] = dimensionality  # set the dimension
 
         if api_key is None:
-            if "MISTRALAI_API_KEY" in os.environ and os.environ["MISTRALAI_API_KEY"]:
-                self.api_key = os.environ["MISTRALAI_API_KEY"]
+            if "NOMIC_API_KEY" in os.environ and os.environ["NOMIC_API_KEY"]:
+                self.api_key = os.environ["NOMIC_API_KEY"]
             else:
                 error_message = (
                     "Did not find api_key, please add an environment variable"
-                    " `MISTRALAI_API_KEY` which contains it, or pass"
+                    " `NOMIC_API_KEY` which contains it, or pass"
                     "  `api_key` as a named parameter."
                 )
                 raise ValueError(error_message)

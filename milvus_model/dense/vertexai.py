@@ -21,12 +21,12 @@ class VertexAIEmbeddingFunction:
         if dimensions is not None:
             self._vertexai_model_meta_info[model_name]["dim"] = dimensions
         if api_key is None:
-            if "VERTEXAI_API_KEY" in os.environ and os.environ["JINAAI_API_KEY"]:
+            if "VERTEXAI_API_KEY" in os.environ and os.environ["VERTEXAI_API_KEY"]:
                 self.api_key = os.environ["VERTEXAI_API_KEY"]
             else:
                 raise ValueError(
                     "Did not find api_key, please add an environment variable"
-                    " `JINAAI_API_KEY` which contains it, or pass"
+                    " `VERTEXAI_API_KEY` which contains it, or pass"
                     " `api_key` as a named parameter."
                 )
         else:
