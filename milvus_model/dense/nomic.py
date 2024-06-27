@@ -49,7 +49,7 @@ class NomicEmbeddingFunction:
             model=self.model_name,
             task_type=task_type,
             dimensionality=self.dimensionality,
-            headers = headers
+            api_key = self.api_key
         )
         return [np.array(embedding) for embedding in embeddings_batch_response['embeddings']]
 
