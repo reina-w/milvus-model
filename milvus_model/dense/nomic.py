@@ -3,9 +3,10 @@ import numpy as np
 from collections import defaultdict
 from nomic import embed
 
-class NomicAIEmbeddingFunction:
+class NomicEmbeddingFunction:
     def __init__(
         self,
+        api_key: str,
         model_name: str = "nomic-embed-text-v1.5",
         task_type: str = "search_document",
         dimensionality: int = 768,
@@ -14,6 +15,7 @@ class NomicAIEmbeddingFunction:
         self._nomic_model_meta_info = defaultdict(dict)
         self._nomic_model_meta_info[model_name]["dim"] = dimensionality  # set the dimension
 
+        self.api_key = api_key
         self.model_name = model_name
         self.task_type = task_type
         self.dimensionality = dimensionality
