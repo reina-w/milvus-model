@@ -41,11 +41,15 @@ class NomicEmbeddingFunction:
         return self._encode([document], task_type="search_document")[0]
 
     def _call_nomic_api(self, texts: List[str], task_type: str):
+        headers = {
+            "Authorization": f"Bearer {self.api_key}"
+        }
         embeddings_batch_response = embed.text(
             texts=texts,
             model=self.model_name,
             task_type=task_type,
             dimensionality=self.dimensionality,
+            headers = headers
         )
         return [np.array(embedding) for embedding in embeddings_batch_response['embeddings']]
 
