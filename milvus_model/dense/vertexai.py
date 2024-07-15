@@ -1,8 +1,11 @@
 from typing import List, Optional
 import numpy as np
-from vertexai.language_models import TextEmbeddingInput, TextEmbeddingModel
 from collections import defaultdict
 import os
+from milvus_model.utils import import_vertexai
+
+import_vertexai()
+from vertexai.language_models import TextEmbeddingInput, TextEmbeddingModel
 
 class VertexAIEmbeddingFunction:
     def __init__(

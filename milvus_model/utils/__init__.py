@@ -63,6 +63,15 @@ def import_voyageai():
 def import_torch():
     _check_library("torch", "torch")
 
+def import_nomic():
+    _check_library("nomic", "nomic")
+
+def import_vertexai():
+    _check_library("vertexai", "vertexai")
+
+def import_mistralai():
+    _check_library("mistralai", "mistralai")
+
 def import_huggingface_hub():
     _check_library("huggingface_hub", package="huggingface-hub")
 

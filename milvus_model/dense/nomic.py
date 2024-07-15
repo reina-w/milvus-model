@@ -1,8 +1,12 @@
 from typing import List
 import numpy as np
 from collections import defaultdict
-from nomic import embed
 import os
+from milvus_model.utils import import_nomic
+
+import_nomic()
+import nomic
+from nomic import embed
 
 class NomicEmbeddingFunction:
     def __init__(
@@ -16,18 +20,14 @@ class NomicEmbeddingFunction:
         self._nomic_model_meta_info = defaultdict(dict)
         self._nomic_model_meta_info[model_name]["dim"] = dimensionality  # set the dimension
 
-        if api_key is None:
-            if "NOMIC_API_KEY" in os.environ and os.environ["NOMIC_API_KEY"]:
-                self.api_key = os.environ["NOMIC_API_KEY"]
-            else:
-                error_message = (
-                    "Did not find api_key, please add an environment variable"
-                    " `NOMIC_API_KEY` which contains it, or pass"
-                    "  `api_key` as a named parameter."
-                )
-                raise ValueError(error_message)
+        if api_key is not None: 
+            nomic.login(api_key)
+        elif "NOMIC_API_KEY" in os.environ:
+            api_key_env = os.environ["NOMIC_API_KEY"]
+            nomic.login(api_key_env)
         else:
-            self.api_key = api_key
+            pass
+        
         self.model_name = model_name
         self.task_type = task_type
         self.dimensionality = dimensionality
@@ -53,9 +53,6 @@ class NomicEmbeddingFunction:
         return self._encode([document], task_type="search_document")[0]
 
     def _call_nomic_api(self, texts: List[str], task_type: str):
-        headers = {
-            "Authorization": f"Bearer {self.api_key}"
-        }
         embeddings_batch_response = embed.text(
             texts=texts,
             model=self.model_name,

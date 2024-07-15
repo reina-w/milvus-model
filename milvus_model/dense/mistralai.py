@@ -1,8 +1,11 @@
 from typing import List, Optional
 import numpy as np
 from collections import defaultdict
-from mistralai.client import MistralClient
 import os
+from milvus_model.utils import import_mistralai
+
+import_mistralai()
+from mistralai.client import MistralClient
 
 class MistralAIEmbeddingFunction:
     def __init__(
@@ -12,7 +15,7 @@ class MistralAIEmbeddingFunction:
         **kwargs,
     ):
         self._mistral_model_meta_info = defaultdict(dict)
-        self._mistral_model_meta_info[model_name]["dim"] = 1024 # fixed dimension
+        self._mistral_model_meta_info["mistral-embed"]["dim"] = 1024 # fixed dimension
 
         if api_key is None:
             if "MISTRALAI_API_KEY" in os.environ and os.environ["MISTRALAI_API_KEY"]:
